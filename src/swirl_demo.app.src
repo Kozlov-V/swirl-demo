@@ -1,0 +1,11 @@
+{application, swirl_demo, [
+  {description, "swirl demo"},
+  {vsn, "0.1"},
+  {registered, []},
+  {applications, [
+    kernel,
+    stdlib
+  ]},
+  {mod, {swirl_demo, []}},
+  {env, []}
+]}.
