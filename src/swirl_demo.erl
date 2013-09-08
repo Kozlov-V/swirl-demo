@@ -3,6 +3,7 @@
 %% public
 -export([
     emit/0,
+    emit/1,
     start/0
 ]).
 
@@ -16,11 +17,14 @@
 
 %% public
 emit() ->
+    emit(?N).
+
+emit(N) ->
     random:seed(erlang:now()),
     Timestamp = os:timestamp(),
-    emit(?N),
+    emit_loop(N),
     Delta = timer:now_diff(os:timestamp(), Timestamp),
-    io:format("average stream emit time: ~p microseconds~n", [Delta / ?N]).
+    io:format("average stream emit time: ~p microseconds~n", [Delta / N]).
 
 start() ->
     ok = application:start(crypto),
@@ -54,18 +58,31 @@ start(_StartType, _StartArgs) ->
     ]}],
     {ok, _} = cowboy:start_http(http, 8, TransOpts, ProtoOpts),
 
-    io:format("~nswirl-demo: http://localhost:8080/~n", []),
+    io:format("~n~n", []),
+    io:format("                         __            __                __                                   ~n", []),
+    io:format("                        |  \\          |  \\              |  \\                                  ~n", []),
+    io:format("  _______  __   __   __  \\$$  ______  | $$          ____| $$  ______   ______ ____    ______  ~n", []),
+    io:format(" /       \\|  \\ |  \\ |  \\|  \\ /      \\ | $$ ______  /      $$ /      \\ |      \\    \\  /      \\ ~n", []),
+    io:format("|  $$$$$$$| $$ | $$ | $$| $$|  $$$$$$\\| $$|      \\|  $$$$$$$|  $$$$$$\\| $$$$$$\\$$$$\\|  $$$$$$\\~n", []),
+    io:format(" \\$$    \\ | $$ | $$ | $$| $$| $$   \\$$| $$ \\$$$$$$| $$  | $$| $$    $$| $$ | $$ | $$| $$  | $$~n", []),
+    io:format(" _\\$$$$$$\\| $$_/ $$_/ $$| $$| $$      | $$        | $$__| $$| $$$$$$$$| $$ | $$ | $$| $$__/ $$~n", []),
+    io:format("|       $$ \\$$   $$   $$| $$| $$      | $$         \\$$    $$ \\$$     \\| $$ | $$ | $$ \\$$    $$~n", []),
+    io:format(" \\$$$$$$$   \\$$$$$\\$$$$  \\$$ \\$$       \\$$          \\$$$$$$$  \\$$$$$$$ \\$$  \\$$  \\$$  \\$$$$$$~n", []),
+    io:format("~n", []),
+    io:format("Server running on: http://localhost:9090/~n", []),
+    io:format("To generate events, type in \"swirl_demo:emit().\"~n", []),
+
     swirl_demo_sup:start_link().
 
 stop(_State) ->
     ok.
 
 %% private
-emit(0) ->
+emit_loop(0) ->
     ok;
-emit(N) ->
+emit_loop(N) ->
     swirl_stream:emit(video, random_event()),
-    emit(N-1).
+    emit_loop(N-1).
 
 random_event() ->
     lists:nth(random:uniform(14), [
