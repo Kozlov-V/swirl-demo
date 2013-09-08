@@ -1,4 +1,9 @@
 swirl-demo
-==========
+=====
+![alt tag](http://scratch.bloomdigital.com/~lpgauth/img/dashboard3.png)
 
-swirl demo
+#### running:
+
+    make && ./bin/start.sh
+    swirl_demo:emit()
+
