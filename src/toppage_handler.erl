@@ -16,7 +16,7 @@ handle(Req, State) ->
     Headers = [
         {<<"Content-Type">>, <<"text/html">>}
     ],
-    {ok, Template} = demo_dtl:render(),
+    {ok, Template} = video_dashboard_dtl:render(),
     {ok, Req2} = cowboy_req:reply(200, Headers, Template, Req),
     {ok, Req2, State}.
 
