@@ -5,5 +5,3 @@ swirl-demo
 #### running:
 
     make && ./bin/start.sh
-    swirl_demo:emit()
-
