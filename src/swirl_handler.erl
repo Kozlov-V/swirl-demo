@@ -32,17 +32,17 @@ init(_Transport, Req, _Opts, _Active) ->
     }}.
 
 stream(<<"ping">>, Req, State) ->
-	{ok, Req, State};
+    {ok, Req, State};
 stream(_Data, Req, State) ->
-	{ok, Req, State}.
+    {ok, Req, State}.
 
 info({flow, _Period, Counters}, Req, State) ->
     Counters2 = jiffy:encode({[
         {<<"counters">>, {map_counters_json(Counters)}}
     ]}),
-	{reply, Counters2, Req, State};
+    {reply, Counters2, Req, State};
 info(_Info, Req, State) ->
-	{ok, Req, State}.
+    {ok, Req, State}.
 
 terminate(_Req, #state {
         mapper_nodes = MapperNodes,
@@ -51,7 +51,7 @@ terminate(_Req, #state {
     }) ->
 
     swirl_flow:stop(FlowId, MapperNodes, ReducerNode),
-	ok.
+    ok.
 
 %% private
 map_counters_json([]) ->
