@@ -58,7 +58,7 @@ start(_StartType, _StartArgs) ->
     ]}],
     {ok, _} = cowboy:start_http(http, 8, TransOpts, ProtoOpts),
 
-    io:format("~n~n", []),
+    io:format("~n", []),
     io:format("                         __            __                __                                   ~n", []),
     io:format("                        |  \\          |  \\              |  \\                                  ~n", []),
     io:format("  _______  __   __   __  \\$$  ______  | $$          ____| $$  ______   ______ ____    ______  ~n", []),
@@ -70,7 +70,7 @@ start(_StartType, _StartArgs) ->
     io:format(" \\$$$$$$$   \\$$$$$\\$$$$  \\$$ \\$$       \\$$          \\$$$$$$$  \\$$$$$$$ \\$$  \\$$  \\$$  \\$$$$$$~n", []),
     io:format("~n", []),
     io:format("Server running on: http://localhost:9090/~n", []),
-    io:format("To generate events, type in \"swirl_demo:emit().\"~n", []),
+    io:format("To generate events type in: swirl_demo:emit().~n", []),
 
     swirl_demo_sup:start_link().
 
