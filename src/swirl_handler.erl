@@ -7,23 +7,33 @@
     terminate/2
 ]).
 
--record(state, {}).
+-record(state, {
+    mapper_nodes,
+    reducer_node,
+    flow_id
+}).
 
 init(_Transport, Req, _Opts, _Active) ->
-    _FlowId = swirl_flow:start(swirl_demo_flow, [
+    MapperNodes = [node()],
+    ReducerNode = node(),
+
+    FlowId = swirl_flow:start(swirl_demo_flow, [
         {stream_name, video},
         {stream_filter, "exchange_id = 3"},
         {reducer_opts, [
           {send_to, self()}
         ]}
-    ], [node()], node()),
+    ], MapperNodes, ReducerNode),
 
-	{ok, Req, #state {}}.
+	{ok, Req, #state {
+        mapper_nodes = MapperNodes,
+        reducer_node = ReducerNode,
+        flow_id = FlowId
+    }}.
 
 stream(<<"ping">>, Req, State) ->
 	{ok, Req, State};
-stream(Data, Req, State) ->
-	io:format("stream received ~s~n", [Data]),
+stream(_Data, Req, State) ->
 	{ok, Req, State}.
 
 info({flow, _Period, Counters}, Req, State) ->
@@ -31,12 +41,16 @@ info({flow, _Period, Counters}, Req, State) ->
         {<<"counters">>, {map_counters_json(Counters)}}
     ]}),
 	{reply, Counters2, Req, State};
-info(Info, Req, State) ->
-	io:format("info received ~p~n", [Info]),
+info(_Info, Req, State) ->
 	{ok, Req, State}.
 
-terminate(_Req, _state) ->
-	io:format("bullet terminate~n"),
+terminate(_Req, #state {
+        mapper_nodes = MapperNodes,
+        reducer_node = ReducerNode,
+        flow_id = FlowId
+    }) ->
+
+    swirl_flow:stop(FlowId, MapperNodes, ReducerNode),
 	ok.
 
 %% private
