@@ -19,7 +19,6 @@ init(_Transport, Req, _Opts, _Active) ->
 
     FlowId = swirl_flow:start(swirl_demo_flow, [
         {stream_name, video},
-        {stream_filter, "exchange_id = 3"},
         {reducer_opts, [
           {send_to, self()}
         ]}

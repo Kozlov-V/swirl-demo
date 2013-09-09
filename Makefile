@@ -16,4 +16,4 @@ compile:
 deps:
 	@echo "Running rebar get-deps..."
 	@$(REBAR) get-deps
-	# @$(REBAR) update-deps
+	@$(REBAR) update-deps
