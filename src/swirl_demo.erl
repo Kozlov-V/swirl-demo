@@ -24,7 +24,7 @@ emit(N) ->
     Timestamp = os:timestamp(),
     emit_loop(N),
     Delta = timer:now_diff(os:timestamp(), Timestamp),
-    io:format("average stream emit time: ~p microseconds~n", [Delta / N]).
+    io:format("Average stream:emit/2 time: ~p microseconds~n", [Delta / N]).
 
 start() ->
     ok = application:start(crypto),
@@ -69,8 +69,8 @@ start(_StartType, _StartArgs) ->
     io:format("|       $$ \\$$   $$   $$| $$| $$      | $$         \\$$    $$ \\$$     \\| $$ | $$ | $$ \\$$    $$~n", []),
     io:format(" \\$$$$$$$   \\$$$$$\\$$$$  \\$$ \\$$       \\$$          \\$$$$$$$  \\$$$$$$$ \\$$  \\$$  \\$$  \\$$$$$$~n", []),
     io:format("~n", []),
-    io:format("Server running on: http://localhost:9090/~n", []),
-    io:format("To generate events type in: swirl_demo:emit().~n", []),
+    io:format("Video dashboard is running on: http://localhost:8080/~n", []),
+    io:format("To generate events enter: swirl_demo:emit().~n", []),
 
     swirl_demo_sup:start_link().
 
