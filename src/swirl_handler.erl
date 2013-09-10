@@ -14,17 +14,19 @@
 }).
 
 init(_Transport, Req, _Opts, _Active) ->
+    {StreamFilter, Req2} = cowboy_req:qs_val(<<"filter">>, Req),
     MapperNodes = [node()],
     ReducerNode = node(),
 
     FlowId = swirl_flow:start(swirl_demo_flow, [
         {stream_name, video},
+        {stream_filter, StreamFilter},
         {reducer_opts, [
           {send_to, self()}
         ]}
     ], MapperNodes, ReducerNode),
 
-	{ok, Req, #state {
+	{ok, Req2, #state {
         mapper_nodes = MapperNodes,
         reducer_node = ReducerNode,
         flow_id = FlowId

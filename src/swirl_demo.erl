@@ -24,7 +24,7 @@ emit(N) ->
     Timestamp = os:timestamp(),
     emit_loop(N),
     Delta = timer:now_diff(os:timestamp(), Timestamp),
-    io:format("Average stream:emit/2 time: ~p microseconds~n", [Delta / N]).
+    io:format("average time: ~p microseconds~n", [Delta / N]).
 
 start() ->
     ok = application:start(crypto),
@@ -86,20 +86,20 @@ emit_loop(N) ->
 
 random_event() ->
     lists:nth(random:uniform(14), [
+        [{type, start}, {exchange_id, 1}],
+        [{type, start}, {exchange_id, 2}],
         [{type, start}, {exchange_id, 3}],
-        [{type, start}, {exchange_id, 3}],
-        [{type, start}, {exchange_id, 3}],
-        [{type, start}, {exchange_id, 3}],
-        [{type, start}, {exchange_id, 3}],
-        [{type, start}, {exchange_id, 3}],
+        [{type, start}, {exchange_id, 4}],
+        [{type, start}, {exchange_id, 5}],
+        [{type, start}, {exchange_id, 1}],
+        [{type, midpoint}, {exchange_id, 2}],
         [{type, midpoint}, {exchange_id, 3}],
-        [{type, midpoint}, {exchange_id, 3}],
-        [{type, midpoint}, {exchange_id, 3}],
-        [{type, complete}, {exchange_id, 3}],
-        [{type, complete}, {exchange_id, 3}],
-        [{type, pause}, {exchange_id, 3}],
+        [{type, midpoint}, {exchange_id, 4}],
+        [{type, complete}, {exchange_id, 5}],
+        [{type, complete}, {exchange_id, 1}],
+        [{type, pause}, {exchange_id, 2}],
         [{type, resume}, {exchange_id, 3}],
-        [{type, rewind}, {exchange_id, 3}]
+        [{type, rewind}, {exchange_id, 4}]
     ]).
 
 mimetypes() ->
