@@ -14,17 +14,19 @@
 }).
 
 init(_Transport, Req, _Opts, _Active) ->
+    {StreamFilter, Req2} = cowboy_req:qs_val(<<"filter">>, Req),
     MapperNodes = [node()],
     ReducerNode = node(),
 
     FlowId = swirl_flow:start(swirl_demo_flow, [
         {stream_name, video},
+        {stream_filter, StreamFilter},
         {reducer_opts, [
           {send_to, self()}
         ]}
     ], MapperNodes, ReducerNode),
 
-	{ok, Req, #state {
+	{ok, Req2, #state {
         mapper_nodes = MapperNodes,
         reducer_node = ReducerNode,
         flow_id = FlowId
@@ -35,11 +37,11 @@ stream(<<"ping">>, Req, State) ->
 stream(_Data, Req, State) ->
     {ok, Req, State}.
 
-info({flow, _Period, Counters}, Req, State) ->
-    Counters2 = jiffy:encode({[
-        {<<"counters">>, {map_counters_json(Counters)}}
+info({flow, _Period, Aggregates}, Req, State) ->
+    Counters = jiffy:encode({[
+        {<<"counters">>, {map_aggregates_json(Aggregates)}}
     ]}),
-    {reply, Counters2, Req, State};
+    {reply, Counters, Req, State};
 info(_Info, Req, State) ->
     {ok, Req, State}.
 
@@ -53,10 +55,10 @@ terminate(_Req, #state {
     ok.
 
 %% private
-map_counters_json([]) ->
+map_aggregates_json([]) ->
     [];
-map_counters_json([{Key, Value} | T]) ->
-    [to_json(Key, Value) | map_counters_json(T)].
+map_aggregates_json([{Key, Value} | T]) ->
+    [to_json(Key, Value) | map_aggregates_json(T)].
 
 to_json({Type}, Value) ->
     {atom_to_binary(Type, utf8), Value}.

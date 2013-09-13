@@ -2,15 +2,15 @@
 
 -behavior(swirl_flow).
 -export([
-    map/3,
-    reduce/3
+    map/4,
+    reduce/4
 ]).
 
 %% swirl_flow callbacks
-map(_StreamName, Event, _MapperOpts) ->
+map(_FlowId, _StreamName, Event, _MapperOpts) ->
     Type = swirl_utils:lookup(type, Event),
     {update, {Type}, {1}}.
 
-reduce(Period, Counters, ReducerOpts) ->
+reduce(_FlowId, Period, Aggregates, ReducerOpts) ->
     Pid = swirl_utils:lookup(send_to, ReducerOpts),
-    Pid ! {flow, Period, Counters}.
+    Pid ! {flow, Period, Aggregates}.
