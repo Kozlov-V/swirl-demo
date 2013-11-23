@@ -41,6 +41,7 @@ info({flow, _Period, Aggregates}, Req, State) ->
     Counters = jiffy:encode({[
         {<<"counters">>, {map_aggregates_json(Aggregates)}}
     ]}),
+    % io:format("[~s] bullet: ~p~n", [swirl_demo_utils:timestamp(), Counters]),
     {reply, Counters, Req, State};
 info(_Info, Req, State) ->
     {ok, Req, State}.

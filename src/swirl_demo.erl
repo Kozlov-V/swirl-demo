@@ -2,8 +2,6 @@
 
 %% public
 -export([
-    emit/0,
-    emit/1,
     start/0
 ]).
 
@@ -13,19 +11,7 @@
     stop/1
 ]).
 
--define(N, 10000000).
-
 %% public
-emit() ->
-    emit(?N).
-
-emit(N) ->
-    random:seed(erlang:now()),
-    Timestamp = os:timestamp(),
-    emit_loop(N),
-    Delta = timer:now_diff(os:timestamp(), Timestamp),
-    io:format("average time: ~p microseconds~n", [Delta / N]).
-
 start() ->
     ok = application:start(crypto),
     ok = application:start(ranch),
@@ -37,18 +23,18 @@ start() ->
 start(_StartType, _StartArgs) ->
     Dispatch = cowboy_router:compile([
         {'_', [
-            {"/", toppage_handler, []},
             {"/assets/[...]", cowboy_static, [
                 {directory, {priv_dir, swirl_demo, [<<"assets">>]}},
-                {mimetypes, mimetypes()}
+                {mimetypes, swirl_demo_utils:mimetypes()}
             ]},
             {"/bullet/[...]", cowboy_static, [
                 {directory, {priv_dir, bullet, []}},
-                {mimetypes, mimetypes()}
+                {mimetypes, swirl_demo_utils:mimetypes()}
             ]},
             {"/swirl", bullet_handler, [
                 {handler, swirl_handler}
-            ]}
+            ]},
+            {'_', toppage_handler, []}
         ]}
     ]),
 
@@ -70,39 +56,9 @@ start(_StartType, _StartArgs) ->
     io:format(" \\$$$$$$$   \\$$$$$\\$$$$  \\$$ \\$$       \\$$          \\$$$$$$$  \\$$$$$$$ \\$$  \\$$  \\$$  \\$$$$$$~n", []),
     io:format("~n", []),
     io:format("Video dashboard is running on: http://localhost:8080/~n", []),
-    io:format("To generate events enter: swirl_demo:emit().~n", []),
+    io:format("To generate events enter: swirl_demo_utils:emit().~n", []),
 
     swirl_demo_sup:start_link().
 
 stop(_State) ->
     ok.
-
-%% private
-emit_loop(0) ->
-    ok;
-emit_loop(N) ->
-    swirl_stream:emit(video, random_event()),
-    emit_loop(N-1).
-
-random_event() ->
-    lists:nth(random:uniform(14), [
-        [{type, start}, {exchange_id, 1}],
-        [{type, start}, {exchange_id, 2}],
-        [{type, start}, {exchange_id, 3}],
-        [{type, start}, {exchange_id, 4}],
-        [{type, start}, {exchange_id, 5}],
-        [{type, start}, {exchange_id, 1}],
-        [{type, midpoint}, {exchange_id, 2}],
-        [{type, midpoint}, {exchange_id, 3}],
-        [{type, midpoint}, {exchange_id, 4}],
-        [{type, complete}, {exchange_id, 5}],
-        [{type, complete}, {exchange_id, 1}],
-        [{type, pause}, {exchange_id, 2}],
-        [{type, resume}, {exchange_id, 3}],
-        [{type, rewind}, {exchange_id, 4}]
-    ]).
-
-mimetypes() ->
-    [{<<".css">>, [<<"text/css">>]},
-     {<<".js">>, [<<"application/javascript">>]},
-     {<<".png">>, [<<"image/png">>]}].
